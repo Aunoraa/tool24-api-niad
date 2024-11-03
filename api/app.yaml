@@ -1,0 +1,5 @@
+runtime: go116  # hoặc phiên bản Go bạn đang sử dụng
+
+handlers:
+  - url: /.*
+    script: auto
