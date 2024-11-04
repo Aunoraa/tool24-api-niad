@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v4"
-	"github.com/joho/godotenv"
 )
 
 type Db struct {
@@ -14,16 +13,19 @@ type Db struct {
 }
 
 func NewDb() (*Db, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, fmt.Errorf("không thể tải file .env: %v", err)
-	}
-
+	//err := godotenv.Load()
+	//if err != nil {
+	//	log.Fatal("Error loading .env file")
+	//}
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
+
+	if host == "" || port == "" || user == "" || password == "" || dbName == "" {
+		return nil, fmt.Errorf("thiếu biến môi trường database")
+	}
 
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbName)
 
