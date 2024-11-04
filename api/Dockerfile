@@ -5,8 +5,6 @@ WORKDIR /app
 # Copy source code vào container
 COPY . .
 
-COPY .env .
-
 # Build ứng dụng
 RUN go build -o api.exe .
 
