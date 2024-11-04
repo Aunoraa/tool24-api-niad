@@ -6,10 +6,10 @@ WORKDIR /app
 COPY . .
 
 # Build ứng dụng
-RUN go build -o api .
+RUN go build -o api.exe .
 
 # Expose port mà ứng dụng lắng nghe
 EXPOSE 8080
 
 # Chạy ứng dụng bằng file api.exe
-CMD ["./api"]
+CMD ["./api.exe"]
