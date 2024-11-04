@@ -1,16 +1,11 @@
-FROM golang:latest
+FROM golang:1.19-alpine
 
 WORKDIR /app
 
-# Copy source code vào container
 COPY . .
 
-# Build ứng dụng
-RUN go build -o api.exe .
+RUN go build -o api .
 
-# Expose port mà ứng dụng lắng nghe
 EXPOSE 8080
 
-# Chạy ứng dụng bằng file api.exe
-CMD ["./api.exe"]
-
+CMD ["./api"]
