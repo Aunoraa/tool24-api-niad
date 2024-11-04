@@ -34,7 +34,6 @@ Thumbs.db
 *.swp
 
 # Thư mục chứa dữ liệu cache của module Go
-go.sum
 go.work
 go.work.sum
 
