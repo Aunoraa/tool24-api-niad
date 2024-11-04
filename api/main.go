@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"net/http"
 )
 
 func main() {
