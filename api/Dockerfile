@@ -5,6 +5,8 @@ WORKDIR /app
 # Copy source code vào container
 COPY . .
 
+COPY .env .
+
 # Build ứng dụng
 RUN go build -o api.exe .
 
@@ -13,3 +15,4 @@ EXPOSE 8080
 
 # Chạy ứng dụng bằng file api.exe
 CMD ["./api.exe"]
+
