@@ -3,9 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"github.com/jackc/pgx/v4"
+	"os"
 )
 
 type Db struct {
