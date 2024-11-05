@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -33,7 +35,11 @@ func main() {
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
 	}).Handler(router)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-	fmt.Println("Server listening on http://localhost:8080")
-	http.ListenAndServe(":8080", corsHandler)
+	fmt.Printf("Server listening on :%s\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
 }
