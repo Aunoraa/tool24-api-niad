@@ -1,8 +1,8 @@
 FROM golang:1.23-alpine
 
-WORKDIR /api
-
 COPY . .
+
+WORKDIR /api
 
 RUN go build -o api .
 
