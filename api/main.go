@@ -23,14 +23,12 @@ import (
 	"os"
 )
 
-// main function initializes the server and routes.
 func main() {
 	db, err := NewDb()
 	if err != nil {
 		fmt.Printf("Lỗi khi khởi tạo cơ sở dữ liệu: %v\n", err)
 		return
 	}
-	//defer db.Close()
 
 	todoService := NewDbTodoService(db)
 	apiHandler := NewAPIHandler(todoService)
