@@ -1,0 +1,183 @@
+basePath: /todo
+definitions:
+  main.Todo:
+    properties:
+      created_at:
+        type: string
+      desc:
+        type: string
+      done:
+        type: boolean
+      done_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample API for managing todos.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Todo API
+  version: "1.0"
+paths:
+  /todo:
+    get:
+      description: Lấy danh sách tất cả các Todo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.Todo'
+            type: array
+      summary: Lấy tất cả các Todo
+      tags:
+      - Todos
+  /todo/create:
+    post:
+      consumes:
+      - application/json
+      description: Tạo một Todo mới với thông tin được cung cấp
+      parameters:
+      - description: Thông tin của Todo
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/main.Todo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/main.Todo'
+        "400":
+          description: Request body không hợp lệ
+          schema:
+            type: string
+      summary: Tạo một Todo mới
+      tags:
+      - Todos
+  /todo/delete/{id}:
+    delete:
+      description: Xóa một Todo theo ID
+      parameters:
+      - description: ID của Todo
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Xóa Todo thành công
+          schema:
+            type: string
+        "400":
+          description: ID không hợp lệ
+          schema:
+            type: string
+        "404":
+          description: Không tìm thấy Todo
+          schema:
+            type: string
+      summary: Xóa một Todo
+      tags:
+      - Todos
+  /todo/getuser/{id}:
+    get:
+      description: Lấy thông tin chi tiết của một Todo theo ID
+      parameters:
+      - description: ID của Todo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Todo'
+        "400":
+          description: ID không hợp lệ
+          schema:
+            type: string
+        "404":
+          description: Không tìm thấy Todo
+          schema:
+            type: string
+      summary: Lấy một Todo theo ID
+      tags:
+      - Todos
+  /todo/update-status/{id}:
+    patch:
+      description: Cập nhật trạng thái của một Todo theo ID
+      parameters:
+      - description: ID của Todo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Todo'
+        "404":
+          description: Không tìm thấy Todo
+          schema:
+            type: string
+      summary: Cập nhật trạng thái của một Todo
+      tags:
+      - Todos
+  /todo/update/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Cập nhật thông tin của một Todo theo ID
+      parameters:
+      - description: ID của Todo
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Thông tin cập nhật của Todo
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/main.Todo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Todo'
+        "400":
+          description: Request body không hợp lệ
+          schema:
+            type: string
+        "404":
+          description: Không tìm thấy Todo
+          schema:
+            type: string
+      summary: Cập nhật một Todo
+      tags:
+      - Todos
+swagger: "2.0"
