@@ -30,7 +30,7 @@ func main() {
 		fmt.Printf("Lỗi khi khởi tạo cơ sở dữ liệu: %v\n", err)
 		return
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	todoService := NewDbTodoService(db)
 	apiHandler := NewAPIHandler(todoService)
