@@ -96,9 +96,19 @@ func (s *DbTodoService) UpdateTodo(id string, todo Todo) (*Todo, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	var doneAt *time.Time // Khai báo biến doneAt là con trỏ tới thời gian
+
+	if todo.Done {
+		now := time.Now() // Lấy thời gian hiện tại
+		doneAt = &now     // Gán địa chỉ của thời gian hiện tại cho doneAt
+	} else {
+		doneAt = nil // Nếu done là false, gán doneAt là nil
+	}
+
+	// Cập nhật title, description, done và done_at
 	_, err := s.db.conn.Exec(context.Background(),
-		"UPDATE todo SET title = $1, description = $2 WHERE id = $3",
-		todo.Title, todo.Desc, id)
+		"UPDATE todo SET title = $1, description = $2, done = $3, done_at = $4 WHERE id = $5",
+		todo.Title, todo.Desc, todo.Done, doneAt, id) // Thêm doneAt vào câu lệnh
 
 	if err != nil {
 		return nil, fmt.Errorf("cập nhật todo thất bại: %v", err)
@@ -129,7 +139,6 @@ func (s *DbTodoService) UpdateTodoStatus(id string) error {
 	} else {
 		doneAt = nil
 	}
-
 	_, err = s.db.conn.Exec(context.Background(), "UPDATE todo SET done = $1, done_at = $2 WHERE id = $3", newDone, doneAt, id)
 	if err != nil {
 		return fmt.Errorf("cập nhật trạng thái todo thất bại: %v", err)

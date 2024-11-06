@@ -47,12 +47,12 @@ func (m *MockTodoService) UpdateTodo(id string, todo Todo) (*Todo, error) {
 func (m *MockTodoService) DeleteTodo(id string) error {
 	for i, todo := range m.todos {
 		if todo.ID == id {
-			// Xóa Todo khỏi danh sách
+			// Xóa todo
 			m.todos = append(m.todos[:i], m.todos[i+1:]...)
-			return nil // Trả về nil nếu xóa thành công
+			return nil
 		}
 	}
-	return fmt.Errorf("không tìm thấy todo với id: %s", id) // Trả về lỗi nếu không tìm thấy
+	return fmt.Errorf("todo not found")
 }
 
 func (m *MockTodoService) UpdateTodoStatus(id string) error {
@@ -217,16 +217,14 @@ func TestAPIHandler_DeleteTodo(t *testing.T) {
 	assert.NoError(t, err)
 
 	rr := httptest.NewRecorder()
-
 	handler.DeleteTodo(rr, req)
 
-	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Equal(t, http.StatusNoContent, rr.Code) // Thay đổi từ http.StatusOK sang http.StatusNoContent
 
 	req, err = http.NewRequest("GET", "/todo/getuser/1", nil)
 	assert.NoError(t, err)
 
 	rr = httptest.NewRecorder()
-
 	handler.GetTodo(rr, req)
 
 	assert.Equal(t, http.StatusNotFound, rr.Code)
