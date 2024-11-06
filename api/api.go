@@ -19,6 +19,12 @@ func NewAPIHandler(todoService TodoService) *APIHandler {
 	}
 }
 
+// @Summary Lấy tất cả các Todo
+// @Description Lấy danh sách tất cả các Todo
+// @Tags Todos
+// @Produce  json
+// @Success 200 {array} Todo
+// @Router /todo [get]
 func (h *APIHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -35,6 +41,16 @@ func (h *APIHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// @Summary Lấy một Todo theo ID
+// @Description Lấy thông tin chi tiết của một Todo theo ID
+// @Tags Todos
+// @Produce  json
+// @Param id path string true "ID của Todo"
+// @Success 200 {object} Todo
+// @Failure 400 {string} string "ID không hợp lệ"
+// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Router /todo/getuser/{id} [get]
 func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -54,6 +70,16 @@ func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(todo)
 }
+
+// @Summary Tạo một Todo mới
+// @Description Tạo một Todo mới với thông tin được cung cấp
+// @Tags Todos
+// @Accept  json
+// @Produce  json
+// @Param todo body Todo true "Thông tin của Todo"
+// @Success 201 {object} Todo
+// @Failure 400 {string} string "Request body không hợp lệ"
+// @Router /todo/create [post]
 func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -80,6 +106,18 @@ func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newTodo)
 }
+
+// @Summary Cập nhật một Todo
+// @Description Cập nhật thông tin của một Todo theo ID
+// @Tags Todos
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID của Todo"
+// @Param todo body Todo true "Thông tin cập nhật của Todo"
+// @Success 200 {object} Todo
+// @Failure 400 {string} string "Request body không hợp lệ"
+// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Router /todo/update/{id} [patch]
 func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPatch {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -112,6 +150,15 @@ func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updatedTodo)
 }
+
+// @Summary Cập nhật trạng thái của một Todo
+// @Description Cập nhật trạng thái của một Todo theo ID
+// @Tags Todos
+// @Produce  json
+// @Param id path string true "ID của Todo"
+// @Success 200 {object} Todo
+// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Router /todo/update-status/{id} [patch]
 func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPatch {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -131,6 +178,15 @@ func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(todo)
 }
+
+// @Summary Xóa một Todo
+// @Description Xóa một Todo theo ID
+// @Tags Todos
+// @Param id path string true "ID của Todo"
+// @Success 204 {string} string "Xóa Todo thành công"
+// @Failure 400 {string} string "ID không hợp lệ"
+// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Router /todo/delete/{id} [delete]
 func (h *APIHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
