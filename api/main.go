@@ -45,7 +45,7 @@ func main() {
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Thay bằng domain của frontend
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE"},
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
