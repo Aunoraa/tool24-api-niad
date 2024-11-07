@@ -30,12 +30,15 @@ func main() {
 		return
 	}
 
+	if err := db.Migrate(); err != nil {
+		log.Fatalf("Lỗi khi áp dụng migration: %v", err)
+	}
+
 	todoService := NewDbTodoService(db)
 	apiHandler := NewAPIHandler(todoService)
 
 	router := mux.NewRouter()
 
-	// Define API routes
 	router.HandleFunc("/todo", apiHandler.GetAllTodos).Methods(http.MethodGet)
 	router.HandleFunc("/todo/getuser/{id}", apiHandler.GetTodo).Methods(http.MethodGet)
 	router.HandleFunc("/todo/create", apiHandler.CreateTodo).Methods(http.MethodPost)
