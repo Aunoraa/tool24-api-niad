@@ -31,7 +31,7 @@ func main() {
 	}
 
 	if os.Getenv("RUN_MIGRATION") == "true" {
-		if err := db.Migrate(); err != nil {
+		if err := Migrate(); err != nil {
 			log.Fatalf("Lỗi khi áp dụng migration: %v", err)
 		}
 	}

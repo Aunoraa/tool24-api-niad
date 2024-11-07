@@ -39,9 +39,8 @@ func NewDb() (*Db, error) {
 	return &Db{conn: conn}, nil
 }
 
-func (db *Db) Migrate() error {
+func Migrate() error {
 	connString := fmt.Sprintf("cockroachdb://%s:%s@%s:%s/%s", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
-
 	m, err := migrate.New(
 		"file://db/migrations",
 		connString,
@@ -50,15 +49,12 @@ func (db *Db) Migrate() error {
 		return fmt.Errorf("lỗi khi tạo migration: %v", err)
 	}
 
-	// Thực hiện migration
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		// Kiểm tra nếu lỗi là dirty database
 		if err.Error() == "Dirty database version 1. Fix and force version." {
 			fmt.Println("Database đang ở trạng thái dirty, đang thực hiện Force version về 1")
 			if forceErr := m.Force(1); forceErr != nil {
 				return fmt.Errorf("không thể Force version: %v", forceErr)
 			}
-			// Thực hiện lại migration sau khi force
 			if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 				return fmt.Errorf("lỗi khi thực hiện lại migration: %v", err)
 			}
@@ -67,6 +63,15 @@ func (db *Db) Migrate() error {
 		}
 	}
 
-	fmt.Println("Migration đã hoàn thành!")
+	version, dirty, err := m.Version()
+	if err != nil {
+		return fmt.Errorf("lỗi khi lấy phiên bản migration: %v", err)
+	}
+
+	if dirty {
+		fmt.Println("Database đang ở trạng thái dirty, cần phải được sửa chữa.")
+	}
+
+	fmt.Printf("Migration thành công, phiên bản hiện tại: %d\n", version)
 	return nil
 }
