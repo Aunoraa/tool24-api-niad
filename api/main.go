@@ -30,8 +30,10 @@ func main() {
 		return
 	}
 
-	if err := db.Migrate(); err != nil {
-		log.Fatalf("Lỗi khi áp dụng migration: %v", err)
+	if os.Getenv("RUN_MIGRATION") == "true" {
+		if err := db.Migrate(); err != nil {
+			log.Fatalf("Lỗi khi áp dụng migration: %v", err)
+		}
 	}
 
 	todoService := NewDbTodoService(db)
