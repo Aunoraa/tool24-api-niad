@@ -41,7 +41,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/todo", apiHandler.GetAllTodos).Methods(http.MethodGet)
+	router.HandleFunc("/todo", apiHandler.GetAllTodo).Methods(http.MethodGet)
 	router.HandleFunc("/todo/getuser/{id}", apiHandler.GetTodo).Methods(http.MethodGet)
 	router.HandleFunc("/todo/create", apiHandler.CreateTodo).Methods(http.MethodPost)
 	router.HandleFunc("/todo/update/{id}", apiHandler.UpdateTodo).Methods(http.MethodPatch)

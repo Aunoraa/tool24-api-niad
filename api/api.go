@@ -30,7 +30,7 @@ func NewAPIHandler(todoService TodoService) *APIHandler {
 // @Produce  json
 // @Success 200 {array} Todo
 // @Router /todo [get]
-func (h *APIHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
+func (h *APIHandler) GetAllTodo(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
@@ -39,7 +39,7 @@ func (h *APIHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	todos, err := h.todoService.GetAllTodos(ctx)
+	todos, err := h.todoService.GetAllTodo(ctx)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error fetching todos: %v", err), http.StatusInternalServerError)
 		return
