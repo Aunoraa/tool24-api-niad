@@ -20,12 +20,12 @@ type Todo struct {
 }
 
 type TodoService interface {
-	GetAllTodos() ([]Todo, error)
-	GetTodo(id string) (*Todo, error)
-	CreateTodo(todo Todo) (*Todo, error)
-	UpdateTodo(id string, todo Todo) (*Todo, error)
-	DeleteTodo(id string) error
-	UpdateTodoStatus(id string) error
+	GetAllTodos(ctx context.Context) ([]Todo, error)
+	GetTodo(ctx context.Context, id string) (*Todo, error)
+	CreateTodo(ctx context.Context, todo Todo) (*Todo, error)
+	UpdateTodo(ctx context.Context, id string, todo Todo) (*Todo, error)
+	DeleteTodo(ctx context.Context, id string) error
+	UpdateTodoStatus(ctx context.Context, id string) error
 }
 
 type DbTodoService struct {
@@ -42,7 +42,7 @@ func generateNewID() string {
 	return uuid.New().String()
 }
 
-func (s *DbTodoService) GetAllTodos() ([]Todo, error) {
+func (s *DbTodoService) GetAllTodos(ctx context.Context) ([]Todo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -68,7 +68,7 @@ func (s *DbTodoService) GetAllTodos() ([]Todo, error) {
 	}
 	return todos, nil
 }
-func (s *DbTodoService) GetTodo(id string) (*Todo, error) {
+func (s *DbTodoService) GetTodo(ctx context.Context, id string) (*Todo, error) {
 	var todo Todo
 	err := s.db.conn.QueryRow(context.Background(), "SELECT id, title, description, done, created_at, done_at FROM todo WHERE id = $1", id).Scan(&todo.ID, &todo.Title, &todo.Desc, &todo.Done, &todo.CreatedAt, &todo.DoneAt)
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *DbTodoService) GetTodo(id string) (*Todo, error) {
 	}
 	return &todo, nil
 }
-func (s *DbTodoService) CreateTodo(todo Todo) (*Todo, error) {
+func (s *DbTodoService) CreateTodo(ctx context.Context, todo Todo) (*Todo, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	todo.ID = generateNewID()
@@ -92,7 +92,7 @@ func (s *DbTodoService) CreateTodo(todo Todo) (*Todo, error) {
 	}
 	return &todo, nil
 }
-func (s *DbTodoService) UpdateTodo(id string, todo Todo) (*Todo, error) {
+func (s *DbTodoService) UpdateTodo(ctx context.Context, id string, todo Todo) (*Todo, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -121,7 +121,7 @@ func (s *DbTodoService) UpdateTodo(id string, todo Todo) (*Todo, error) {
 	}
 	return &updatedTodo, nil
 }
-func (s *DbTodoService) UpdateTodoStatus(id string) error {
+func (s *DbTodoService) UpdateTodoStatus(ctx context.Context, id string) error {
 	var currentDone bool
 	err := s.db.conn.QueryRow(context.Background(), "SELECT done FROM todo WHERE id = $1", id).Scan(&currentDone)
 	if err != nil {
@@ -143,7 +143,7 @@ func (s *DbTodoService) UpdateTodoStatus(id string) error {
 
 	return nil
 }
-func (s *DbTodoService) DeleteTodo(id string) error {
+func (s *DbTodoService) DeleteTodo(ctx context.Context, id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

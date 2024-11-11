@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -30,11 +31,15 @@ func NewAPIHandler(todoService TodoService) *APIHandler {
 // @Success 200 {array} Todo
 // @Router /todo [get]
 func (h *APIHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	todos, err := h.todoService.GetAllTodos()
+	todos, err := h.todoService.GetAllTodos(ctx)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error fetching todos: %v", err), http.StatusInternalServerError)
 		return
@@ -56,6 +61,10 @@ func (h *APIHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {string} string "Không tìm thấy Todo"
 // @Router /todo/getuser/{id} [get]
 func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -67,7 +76,7 @@ func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err := h.todoService.GetTodo(id)
+	todo, err := h.todoService.GetTodo(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -95,6 +104,10 @@ func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Request body không hợp lệ"
 // @Router /todo/create [post]
 func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -111,7 +124,7 @@ func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	todo.CreatedAt = time.Now()
-	newTodo, err := h.todoService.CreateTodo(todo)
+	newTodo, err := h.todoService.CreateTodo(ctx, todo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -133,6 +146,10 @@ func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {string} string "Không tìm thấy Todo"
 // @Router /todo/update/{id} [patch]
 func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	if r.Method != http.MethodPatch {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -157,7 +174,7 @@ func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Gọi service để cập nhật todo
-	updatedTodo, err := h.todoService.UpdateTodo(id, todo)
+	updatedTodo, err := h.todoService.UpdateTodo(ctx, id, todo)
 	if err != nil {
 		if err.Error() == "not found" {
 			http.Error(w, "Todo not found", http.StatusNotFound) // Trả về 404 nếu không tìm thấy todo
@@ -181,6 +198,10 @@ func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {string} string "Không tìm thấy Todo"
 // @Router /todo/update-status/{id} [patch]
 func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	if r.Method != http.MethodPatch {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -192,13 +213,13 @@ func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.todoService.UpdateTodoStatus(id)
+	err := h.todoService.UpdateTodoStatus(ctx, id)
 	if err != nil {
 		http.Error(w, "Error updating todo status: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	todo, err := h.todoService.GetTodo(id)
+	todo, err := h.todoService.GetTodo(ctx, id)
 	if err != nil {
 		http.Error(w, "Error retrieving updated todo: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -220,6 +241,10 @@ func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {string} string "Không tìm thấy Todo"
 // @Router /todo/delete/{id} [delete]
 func (h *APIHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -231,7 +256,7 @@ func (h *APIHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.todoService.DeleteTodo(id)
+	err := h.todoService.DeleteTodo(ctx, id)
 	if err != nil {
 		// Ghi log lỗi để dễ dàng debug sau này
 		log.Println("Error deleting todo:", err)
