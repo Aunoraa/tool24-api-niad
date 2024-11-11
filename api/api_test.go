@@ -2,10 +2,10 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"net/http"
@@ -20,12 +20,12 @@ type MockTodoStore struct {
 	mock.Mock
 }
 
-func (m *MockTodoStore) GetAllTodos() ([]Todo, error) {
+func (m *MockTodoStore) GetAllTodos(ctx context.Context) ([]Todo, error) {
 	args := m.Called()
 	return args.Get(0).([]Todo), args.Error(1)
 }
 
-func (m *MockTodoStore) GetTodo(id string) (*Todo, error) {
+func (m *MockTodoStore) GetTodo(ctx context.Context, id string) (*Todo, error) {
 	args := m.Called(id)
 
 	if todo := args.Get(0); todo != nil {
@@ -36,31 +36,26 @@ func (m *MockTodoStore) GetTodo(id string) (*Todo, error) {
 	return nil, args.Error(1)
 }
 
-func (m *MockTodoStore) CreateTodo(todo Todo) (*Todo, error) {
+func (m *MockTodoStore) CreateTodo(ctx context.Context, todo Todo) (*Todo, error) {
 	args := m.Called(todo)
 	return args.Get(0).(*Todo), args.Error(1)
 }
 
-func (m *MockTodoStore) UpdateTodo(id string, todo Todo) (*Todo, error) {
+func (m *MockTodoStore) UpdateTodo(ctx context.Context, id string, todo Todo) (*Todo, error) {
 	args := m.Called(id, todo)
 	return args.Get(0).(*Todo), args.Error(1)
 }
 
-func (m *MockTodoStore) DeleteTodo(id string) error {
+func (m *MockTodoStore) DeleteTodo(ctx context.Context, id string) error {
 	args := m.Called(id)
 	return args.Error(0)
 }
-func (m *MockTodoStore) UpdateTodoStatus(id string) error {
+func (m *MockTodoStore) UpdateTodoStatus(ctx context.Context, id string) error {
 	args := m.Called(id)
 	return args.Error(0)
 }
 
-func (h *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	router := mux.NewRouter()
-	router.HandleFunc("/todo", h.GetAllTodos).Methods("GET")
-	router.ServeHTTP(w, r)
-}
-func TestGetAllTodos(t *testing.T) {
+func TestGetAllTodo(t *testing.T) {
 	mockStore := new(MockTodoStore)
 	handler := &APIHandler{todoService: mockStore}
 	mockData := []Todo{
@@ -73,22 +68,24 @@ func TestGetAllTodos(t *testing.T) {
 			DoneAt:    nil,
 		},
 	}
+
 	mockStore.On("GetAllTodos").Return(mockData, nil)
-	req, err := http.NewRequest("GET", "/todo", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	req := httptest.NewRequest(http.MethodGet, "/todo", nil)
 	rr := httptest.NewRecorder()
-	handler.ServeHTTP(rr, req)
+
+	handler.GetAllTodos(rr, req)
 
 	if rr.Code != http.StatusOK {
 		t.Errorf("expected status %v, got %v", http.StatusOK, rr.Code)
 	}
+
 	var actualTodos []Todo
-	err = json.Unmarshal(rr.Body.Bytes(), &actualTodos)
+	err := json.Unmarshal(rr.Body.Bytes(), &actualTodos)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for i := range actualTodos {
 		actualTodos[i].CreatedAt = time.Time{}
 		actualTodos[i].DoneAt = nil
@@ -97,11 +94,14 @@ func TestGetAllTodos(t *testing.T) {
 		mockData[i].CreatedAt = time.Time{}
 		mockData[i].DoneAt = nil
 	}
+
 	if !reflect.DeepEqual(actualTodos, mockData) {
 		t.Errorf("expected body %+v, got %+v", mockData, actualTodos)
 	}
+
 	mockStore.AssertExpectations(t)
 }
+
 func TestGetTodo(t *testing.T) {
 
 	mockStore := new(MockTodoStore)

@@ -173,11 +173,10 @@ func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Gọi service để cập nhật todo
 	updatedTodo, err := h.todoService.UpdateTodo(ctx, id, todo)
 	if err != nil {
 		if err.Error() == "not found" {
-			http.Error(w, "Todo not found", http.StatusNotFound) // Trả về 404 nếu không tìm thấy todo
+			http.Error(w, "Todo not found", http.StatusNotFound)
 			return
 		}
 		http.Error(w, "Failed to update todo", http.StatusInternalServerError)
@@ -258,7 +257,6 @@ func (h *APIHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 
 	err := h.todoService.DeleteTodo(ctx, id)
 	if err != nil {
-		// Ghi log lỗi để dễ dàng debug sau này
 		log.Println("Error deleting todo:", err)
 
 		if err.Error() == "not found" {
