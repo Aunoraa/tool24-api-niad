@@ -20,7 +20,7 @@ type MockTodoStore struct {
 	mock.Mock
 }
 
-func (m *MockTodoStore) GetAllTodos(ctx context.Context) ([]Todo, error) {
+func (m *MockTodoStore) GetAllTodo(ctx context.Context) ([]Todo, error) {
 	args := m.Called()
 	return args.Get(0).([]Todo), args.Error(1)
 }
@@ -69,12 +69,12 @@ func TestGetAllTodo(t *testing.T) {
 		},
 	}
 
-	mockStore.On("GetAllTodos").Return(mockData, nil)
+	mockStore.On("GetAllTodo").Return(mockData, nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/todo", nil)
 	rr := httptest.NewRecorder()
 
-	handler.GetAllTodos(rr, req)
+	handler.GetAllTodo(rr, req)
 
 	if rr.Code != http.StatusOK {
 		t.Errorf("expected status %v, got %v", http.StatusOK, rr.Code)
