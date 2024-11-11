@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -12,6 +14,8 @@ import (
 type APIHandler struct {
 	todoService TodoService
 }
+
+var ErrTodoNotFound = errors.New("todo not found")
 
 func NewAPIHandler(todoService TodoService) *APIHandler {
 	return &APIHandler{
@@ -56,19 +60,29 @@ func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
 	id := strings.TrimPrefix(r.URL.Path, "/todo/getuser/")
 	if id == "" {
 		http.Error(w, "ID is required", http.StatusBadRequest)
 		return
 	}
+
 	todo, err := h.todoService.GetTodo(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+
+	if todo == nil {
+		http.Error(w, "Todo not found", http.StatusNotFound)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(todo)
+	if err := json.NewEncoder(w).Encode(todo); err != nil {
+		http.Error(w, "Failed to encode todo", http.StatusInternalServerError)
+	}
 }
 
 // @Summary Tạo một Todo mới
@@ -124,28 +138,35 @@ func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id := strings.TrimPrefix(r.URL.Path, "/todo/update/")
+	if id == "" {
+		http.Error(w, "ID is required", http.StatusNotFound)
+		return
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusBadRequest)
 		return
 	}
+
 	var todo Todo
 	err = json.Unmarshal(body, &todo)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+
+	// Gọi service để cập nhật todo
 	updatedTodo, err := h.todoService.UpdateTodo(id, todo)
 	if err != nil {
-		switch err.Error() {
-		case "not found":
-			http.Error(w, "Todo not found", http.StatusNotFound)
-			return
-		default:
-			http.Error(w, "Failed to update todo", http.StatusInternalServerError)
+		if err.Error() == "not found" {
+			http.Error(w, "Todo not found", http.StatusNotFound) // Trả về 404 nếu không tìm thấy todo
 			return
 		}
+		http.Error(w, "Failed to update todo", http.StatusInternalServerError)
+		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updatedTodo)
@@ -164,19 +185,30 @@ func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
 	id := r.URL.Path[len("/todo/update-status/"):]
+	if id == "" {
+		http.Error(w, "Invalid Todo ID", http.StatusBadRequest)
+		return
+	}
+
 	err := h.todoService.UpdateTodoStatus(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error updating todo status: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	todo, err := h.todoService.GetTodo(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error retrieving updated todo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(todo)
+	if err := json.NewEncoder(w).Encode(todo); err != nil {
+		http.Error(w, "Error encoding response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 // @Summary Xóa một Todo
@@ -192,19 +224,25 @@ func (h *APIHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	id := strings.TrimPrefix(r.URL.Path, "/todo/delete/")
+
+	id := r.URL.Path[len("/todo/delete/"):]
 	if id == "" {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		http.Error(w, "Invalid Todo ID", http.StatusBadRequest)
 		return
 	}
+
 	err := h.todoService.DeleteTodo(id)
 	if err != nil {
+		// Ghi log lỗi để dễ dàng debug sau này
+		log.Println("Error deleting todo:", err)
+
 		if err.Error() == "not found" {
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, "not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error deleting todo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }

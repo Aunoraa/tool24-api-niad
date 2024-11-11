@@ -146,17 +146,21 @@ func (s *DbTodoService) UpdateTodoStatus(id string) error {
 func (s *DbTodoService) DeleteTodo(id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
 	var exists bool
 	err := s.db.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM todo WHERE id = $1)", id).Scan(&exists)
 	if err != nil {
 		return fmt.Errorf("kiểm tra sự tồn tại của todo thất bại: %v", err)
 	}
+
 	if !exists {
-		return fmt.Errorf("not found ID")
+		return fmt.Errorf("not found") // Lỗi khi không tìm thấy
 	}
+
 	_, err = s.db.conn.Exec(context.Background(), "DELETE FROM todo WHERE id = $1", id)
 	if err != nil {
-		return fmt.Errorf("xóa todo thất bại: %v", err)
+		return fmt.Errorf("xóa todo thất bại: %v", err) // Lỗi khi xóa
 	}
+
 	return nil
 }
