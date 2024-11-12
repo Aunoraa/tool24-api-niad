@@ -32,7 +32,6 @@ func (m *MockTodoStore) GetTodo(ctx context.Context, id string) (*Todo, error) {
 		return todo.(*Todo), args.Error(1)
 	}
 
-	// Trả về nil nếu không tìm thấy Todo
 	return nil, args.Error(1)
 }
 
@@ -101,7 +100,6 @@ func TestGetAllTodo(t *testing.T) {
 
 	mockStore.AssertExpectations(t)
 }
-
 func TestGetTodo(t *testing.T) {
 
 	mockStore := new(MockTodoStore)
@@ -140,15 +138,12 @@ func TestGetTodo(t *testing.T) {
 		rr := httptest.NewRecorder()
 		handler.GetTodo(rr, req)
 
-		// Kiểm tra mã lỗi HTTP trả về
 		assert.Equal(t, http.StatusNotFound, rr.Code)
 
-		// Kiểm tra nội dung phản hồi lỗi, loại bỏ newline
 		expected := "Todo not found"
 		actual := strings.TrimSpace(rr.Body.String()) // Loại bỏ newline hoặc khoảng trắng thừa
 		assert.Equal(t, expected, actual)
 
-		// Kiểm tra mock đã được gọi với ID "not_found"
 		mockStore.AssertExpectations(t)
 	})
 
@@ -158,7 +153,6 @@ func TestGetTodo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// Tạo một con trỏ đến đối tượng Todo
 		mockData := &Todo{
 			ID:        "1",
 			Title:     "Test Todo",
@@ -181,12 +175,10 @@ func TestGetTodo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// So sánh các trường thời gian
 		if !todoResponse.CreatedAt.Equal(mockData.CreatedAt) {
 			t.Errorf("Expected CreatedAt: %v, but got: %v", mockData.CreatedAt, todoResponse.CreatedAt)
 		}
 
-		// So sánh phần còn lại của đối tượng Todo
 		assert.Equal(t, *mockData, todoResponse) // So sánh con trỏ *mockData với todoResponse
 	})
 }
@@ -366,7 +358,6 @@ func TestUpdateTodo(t *testing.T) {
 
 }
 func TestUpdateTodoStatus(t *testing.T) {
-	// Khởi tạo mockStore trong mỗi test case
 	mockStore := new(MockTodoStore)
 	handler := &APIHandler{todoService: mockStore}
 
@@ -381,7 +372,6 @@ func TestUpdateTodoStatus(t *testing.T) {
 	}
 
 	t.Run("Success", func(t *testing.T) {
-		// Reset mock expectations
 		mockStore.ExpectedCalls = nil
 
 		mockStore.On("UpdateTodoStatus", todoID).Return(nil)
@@ -411,7 +401,6 @@ func TestUpdateTodoStatus(t *testing.T) {
 	})
 
 	t.Run("Error_UpdateTodoStatus", func(t *testing.T) {
-		// Reset mock expectations
 		mockStore.ExpectedCalls = nil
 
 		mockStore.On("UpdateTodoStatus", todoID).Return(assert.AnError)
@@ -432,7 +421,6 @@ func TestUpdateTodoStatus(t *testing.T) {
 	})
 
 	t.Run("Error_GetTodo", func(t *testing.T) {
-		// Reset mock expectations
 		mockStore.ExpectedCalls = nil
 
 		mockStore.On("UpdateTodoStatus", todoID).Return(nil)
