@@ -24,10 +24,10 @@ func NewAPIHandler(todoService TodoService) *APIHandler {
 	}
 }
 
-// @Summary Lấy tất cả các Todo
-// @Description Lấy danh sách tất cả các Todo
+// @Summary Get all Todos
+// @Description Retrieve a list of all Todos
 // @Tags Todos
-// @Produce  json
+// @Produce json
 // @Success 200 {array} Todo
 // @Router /todo [get]
 func (h *APIHandler) GetAllTodo(w http.ResponseWriter, r *http.Request) {
@@ -51,14 +51,14 @@ func (h *APIHandler) GetAllTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// @Summary Lấy một Todo theo ID
-// @Description Lấy thông tin chi tiết của một Todo theo ID
+// @Summary Get a Todo by ID
+// @Description Retrieve details of a Todo by its ID
 // @Tags Todos
-// @Produce  json
-// @Param id path string true "ID của Todo"
+// @Produce json
+// @Param id path string true "Todo ID"
 // @Success 200 {object} Todo
-// @Failure 400 {string} string "ID không hợp lệ"
-// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Failure 400 {string} string "Invalid ID"
+// @Failure 404 {string} string "Todo not found"
 // @Router /todo/getuser/{id} [get]
 func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 
@@ -94,14 +94,14 @@ func (h *APIHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// @Summary Tạo một Todo mới
-// @Description Tạo một Todo mới với thông tin được cung cấp
+// @Summary Create a new Todo
+// @Description Create a new Todo with provided information
 // @Tags Todos
-// @Accept  json
-// @Produce  json
-// @Param todo body Todo true "Thông tin của Todo"
+// @Accept json
+// @Produce json
+// @Param todo body Todo true "Todo Information"
 // @Success 201 {object} Todo
-// @Failure 400 {string} string "Request body không hợp lệ"
+// @Failure 400 {string} string "Invalid request body"
 // @Router /todo/create [post]
 func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 
@@ -134,16 +134,16 @@ func (h *APIHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newTodo)
 }
 
-// @Summary Cập nhật một Todo
-// @Description Cập nhật thông tin của một Todo theo ID
+// @Summary Update a Todo
+// @Description Update details of a Todo by its ID
 // @Tags Todos
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID của Todo"
-// @Param todo body Todo true "Thông tin cập nhật của Todo"
+// @Accept json
+// @Produce json
+// @Param id path string true "Todo ID"
+// @Param todo body Todo true "Updated Todo Information"
 // @Success 200 {object} Todo
-// @Failure 400 {string} string "Request body không hợp lệ"
-// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Failure 400 {string} string "Invalid request body"
+// @Failure 404 {string} string "Todo not found"
 // @Router /todo/update/{id} [patch]
 func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 
@@ -188,13 +188,13 @@ func (h *APIHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updatedTodo)
 }
 
-// @Summary Cập nhật trạng thái của một Todo
-// @Description Cập nhật trạng thái của một Todo theo ID
+// @Summary Update Todo Status
+// @Description Update the status of a Todo by its ID
 // @Tags Todos
-// @Produce  json
-// @Param id path string true "ID của Todo"
+// @Produce json
+// @Param id path string true "Todo ID"
 // @Success 200 {object} Todo
-// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Failure 404 {string} string "Todo not found"
 // @Router /todo/update-status/{id} [patch]
 func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 
@@ -231,13 +231,13 @@ func (h *APIHandler) UpdateTodoStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// @Summary Xóa một Todo
-// @Description Xóa một Todo theo ID
+// @Summary Delete a Todo
+// @Description Delete a Todo by its ID
 // @Tags Todos
-// @Param id path string true "ID của Todo"
-// @Success 204 {string} string "Xóa Todo thành công"
-// @Failure 400 {string} string "ID không hợp lệ"
-// @Failure 404 {string} string "Không tìm thấy Todo"
+// @Param id path string true "Todo ID"
+// @Success 204 {string} string "Todo deleted successfully"
+// @Failure 400 {string} string "Invalid ID"
+// @Failure 404 {string} string "Todo not found"
 // @Router /todo/delete/{id} [delete]
 func (h *APIHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 

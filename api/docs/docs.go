@@ -26,14 +26,14 @@ const docTemplate = `{
     "paths": {
         "/todo": {
             "get": {
-                "description": "Lấy danh sách tất cả các Todo",
+                "description": "Retrieve a list of all Todos",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Todos"
                 ],
-                "summary": "Lấy tất cả các Todo",
+                "summary": "Get all Todos",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -49,7 +49,7 @@ const docTemplate = `{
         },
         "/todo/create": {
             "post": {
-                "description": "Tạo một Todo mới với thông tin được cung cấp",
+                "description": "Create a new Todo with provided information",
                 "consumes": [
                     "application/json"
                 ],
@@ -59,10 +59,10 @@ const docTemplate = `{
                 "tags": [
                     "Todos"
                 ],
-                "summary": "Tạo một Todo mới",
+                "summary": "Create a new Todo",
                 "parameters": [
                     {
-                        "description": "Thông tin của Todo",
+                        "description": "Todo Information",
                         "name": "todo",
                         "in": "body",
                         "required": true,
@@ -79,7 +79,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Request body không hợp lệ",
+                        "description": "Invalid request body",
                         "schema": {
                             "type": "string"
                         }
@@ -89,15 +89,15 @@ const docTemplate = `{
         },
         "/todo/delete/{id}": {
             "delete": {
-                "description": "Xóa một Todo theo ID",
+                "description": "Delete a Todo by its ID",
                 "tags": [
                     "Todos"
                 ],
-                "summary": "Xóa một Todo",
+                "summary": "Delete a Todo",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID của Todo",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -105,19 +105,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "Xóa Todo thành công",
+                        "description": "Todo deleted successfully",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "ID không hợp lệ",
+                        "description": "Invalid ID",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Không tìm thấy Todo",
+                        "description": "Todo not found",
                         "schema": {
                             "type": "string"
                         }
@@ -127,18 +127,18 @@ const docTemplate = `{
         },
         "/todo/getuser/{id}": {
             "get": {
-                "description": "Lấy thông tin chi tiết của một Todo theo ID",
+                "description": "Retrieve details of a Todo by its ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Todos"
                 ],
-                "summary": "Lấy một Todo theo ID",
+                "summary": "Get a Todo by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID của Todo",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -152,13 +152,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "ID không hợp lệ",
+                        "description": "Invalid ID",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Không tìm thấy Todo",
+                        "description": "Todo not found",
                         "schema": {
                             "type": "string"
                         }
@@ -168,18 +168,18 @@ const docTemplate = `{
         },
         "/todo/update-status/{id}": {
             "patch": {
-                "description": "Cập nhật trạng thái của một Todo theo ID",
+                "description": "Update the status of a Todo by its ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Todos"
                 ],
-                "summary": "Cập nhật trạng thái của một Todo",
+                "summary": "Update Todo Status",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID của Todo",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -193,7 +193,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "Không tìm thấy Todo",
+                        "description": "Todo not found",
                         "schema": {
                             "type": "string"
                         }
@@ -203,7 +203,7 @@ const docTemplate = `{
         },
         "/todo/update/{id}": {
             "patch": {
-                "description": "Cập nhật thông tin của một Todo theo ID",
+                "description": "Update details of a Todo by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -213,17 +213,17 @@ const docTemplate = `{
                 "tags": [
                     "Todos"
                 ],
-                "summary": "Cập nhật một Todo",
+                "summary": "Update a Todo",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID của Todo",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Thông tin cập nhật của Todo",
+                        "description": "Updated Todo Information",
                         "name": "todo",
                         "in": "body",
                         "required": true,
@@ -240,13 +240,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Request body không hợp lệ",
+                        "description": "Invalid request body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Không tìm thấy Todo",
+                        "description": "Todo not found",
                         "schema": {
                             "type": "string"
                         }

@@ -31,7 +31,7 @@ info:
 paths:
   /todo:
     get:
-      description: Lấy danh sách tất cả các Todo
+      description: Retrieve a list of all Todos
       produces:
       - application/json
       responses:
@@ -41,16 +41,16 @@ paths:
             items:
               $ref: '#/definitions/main.Todo'
             type: array
-      summary: Lấy tất cả các Todo
+      summary: Get all Todos
       tags:
       - Todos
   /todo/create:
     post:
       consumes:
       - application/json
-      description: Tạo một Todo mới với thông tin được cung cấp
+      description: Create a new Todo with provided information
       parameters:
-      - description: Thông tin của Todo
+      - description: Todo Information
         in: body
         name: todo
         required: true
@@ -64,42 +64,42 @@ paths:
           schema:
             $ref: '#/definitions/main.Todo'
         "400":
-          description: Request body không hợp lệ
+          description: Invalid request body
           schema:
             type: string
-      summary: Tạo một Todo mới
+      summary: Create a new Todo
       tags:
       - Todos
   /todo/delete/{id}:
     delete:
-      description: Xóa một Todo theo ID
+      description: Delete a Todo by its ID
       parameters:
-      - description: ID của Todo
+      - description: Todo ID
         in: path
         name: id
         required: true
         type: string
       responses:
         "204":
-          description: Xóa Todo thành công
+          description: Todo deleted successfully
           schema:
             type: string
         "400":
-          description: ID không hợp lệ
+          description: Invalid ID
           schema:
             type: string
         "404":
-          description: Không tìm thấy Todo
+          description: Todo not found
           schema:
             type: string
-      summary: Xóa một Todo
+      summary: Delete a Todo
       tags:
       - Todos
   /todo/getuser/{id}:
     get:
-      description: Lấy thông tin chi tiết của một Todo theo ID
+      description: Retrieve details of a Todo by its ID
       parameters:
-      - description: ID của Todo
+      - description: Todo ID
         in: path
         name: id
         required: true
@@ -112,21 +112,21 @@ paths:
           schema:
             $ref: '#/definitions/main.Todo'
         "400":
-          description: ID không hợp lệ
+          description: Invalid ID
           schema:
             type: string
         "404":
-          description: Không tìm thấy Todo
+          description: Todo not found
           schema:
             type: string
-      summary: Lấy một Todo theo ID
+      summary: Get a Todo by ID
       tags:
       - Todos
   /todo/update-status/{id}:
     patch:
-      description: Cập nhật trạng thái của một Todo theo ID
+      description: Update the status of a Todo by its ID
       parameters:
-      - description: ID của Todo
+      - description: Todo ID
         in: path
         name: id
         required: true
@@ -139,24 +139,24 @@ paths:
           schema:
             $ref: '#/definitions/main.Todo'
         "404":
-          description: Không tìm thấy Todo
+          description: Todo not found
           schema:
             type: string
-      summary: Cập nhật trạng thái của một Todo
+      summary: Update Todo Status
       tags:
       - Todos
   /todo/update/{id}:
     patch:
       consumes:
       - application/json
-      description: Cập nhật thông tin của một Todo theo ID
+      description: Update details of a Todo by its ID
       parameters:
-      - description: ID của Todo
+      - description: Todo ID
         in: path
         name: id
         required: true
         type: string
-      - description: Thông tin cập nhật của Todo
+      - description: Updated Todo Information
         in: body
         name: todo
         required: true
@@ -170,14 +170,14 @@ paths:
           schema:
             $ref: '#/definitions/main.Todo'
         "400":
-          description: Request body không hợp lệ
+          description: Invalid request body
           schema:
             type: string
         "404":
-          description: Không tìm thấy Todo
+          description: Todo not found
           schema:
             type: string
-      summary: Cập nhật một Todo
+      summary: Update a Todo
       tags:
       - Todos
 swagger: "2.0"
