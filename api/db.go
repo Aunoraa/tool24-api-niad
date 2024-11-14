@@ -8,6 +8,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"os"
+	"time"
 )
 
 type Db struct {
@@ -15,6 +16,9 @@ type Db struct {
 }
 
 func NewDb() (*Db, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
 	//err := godotenv.Load()
 	//if err != nil {
@@ -31,7 +35,7 @@ func NewDb() (*Db, error) {
 		return nil, fmt.Errorf("thiếu biến môi trường database")
 	}
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbName)
-	conn, err := pgxpool.Connect(context.Background(), connString)
+	conn, err := pgxpool.Connect(ctx, connString)
 	if err != nil {
 		return nil, fmt.Errorf("không thể kết nối đến cơ sở dữ liệu: %v", err)
 	}
