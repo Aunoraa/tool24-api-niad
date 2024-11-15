@@ -61,6 +61,6 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Printf("Server listening on :%s\n", port)
+	fmt.Printf("Server On :%s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
 }
