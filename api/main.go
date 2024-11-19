@@ -14,7 +14,7 @@ package main
 
 import (
 	_ "api/docs"
-	"fmt"
+	f "fmt"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/swaggo/http-swagger"
@@ -26,7 +26,7 @@ import (
 func main() {
 	db, err := NewDb()
 	if err != nil {
-		fmt.Printf("Lỗi khi khởi tạo cơ sở dữ liệu: %v\n", err)
+		f.Printf("Lỗi khi khởi tạo cơ sở dữ liệu: %v\n", err)
 		return
 	}
 
@@ -61,6 +61,6 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Printf("Server On :%s\n", port)
+	f.Printf("Server On :%s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
 }
